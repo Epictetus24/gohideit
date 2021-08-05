@@ -8,38 +8,50 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/Epictetus24/gohideit/enc"
 	"github.com/fatih/color"
+	"github.com/manifoldco/promptui"
 )
 
 //generates gobin with shellcode
-func Generate(payload int, outputdir string, xorkey string, aeskey string, shellcode []byte) {
+func Generate(outputdir string, xorkey string, aeskey string, shellcode []byte) {
 
 	AESenc := enc.AES256Enc(aeskey, shellcode)
 
-	payloadfilepath := paynotofile(payload)
+	payloadlist, err := ioutil.ReadDir("./cmd/")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-	writeandbuild(AESenc, payloadfilepath, outputdir)
+	var payloadnamelist []string
+	for i := range payloadlist {
+		payloadnamelist = append(payloadnamelist, payloadlist[i].Name())
+	}
 
-	color.Green("[+] Payload generated, saved at %s.\n", outputdir)
+	payloadchoice := promptui.Select{
+		Label: "Select payload to use",
+		Items: payloadnamelist,
+	}
 
-	color.Yellow("[/] Testing Decrypt.\n")
-	enc.AES256Dec(AESenc)
+	payloadno, _, _ := payloadchoice.Run()
 
-}
+	payloadfile := "cmd/" + payloadnamelist[payloadno] + "/main.go"
 
-func paynotofile(payloadno int) string {
-
-	filepath := []string{"cmd/basicobf/main.go", "cmd/CreateProcessDecrypt/main.go"}
-
-	if _, err := os.Stat(filepath[payloadno]); os.IsNotExist(err) {
+	if _, err := os.Stat(payloadfile); os.IsNotExist(err) {
 		// path/to/whatever does not exist
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	return filepath[payloadno]
+	writeandbuild(AESenc, payloadfile, outputdir)
+
+	color.Green("[+] Payload generated, saved at %s.\n", outputdir)
+
+	color.Yellow("[/] Testing Decrypt.\n")
+	enc.AES256Dec(AESenc)
 
 }
 
@@ -60,13 +72,13 @@ func writeandbuild(AESencbits enc.AESbits, path string, outputdir string) {
 
 	build(path, outputdir)
 
-	/*
-		color.Yellow("[/] Cleaning up!")
-		strreplace(enchexstr, "AESencbits.Enchex = \"\"", path)
-		strreplace(keyhexstr, "AESencbits.Keystr = \"\"", path)
-		strreplace(salthexstr, "AESencbits.Salthex = \"\"", path)
-		strreplace(noncehexstr, "AESencbits.Noncehex = \"\"", path)
-	*/
+	time.Sleep(200)
+
+	color.Yellow("[/] Cleaning up!")
+	strreplace(enchexstr, "AESencbits.Enchex = \"\"", path)
+	strreplace(keyhexstr, "AESencbits.Keystr = \"\"", path)
+	strreplace(salthexstr, "AESencbits.Salthex = \"\"", path)
+	strreplace(noncehexstr, "AESencbits.Noncehex = \"\"", path)
 
 }
 

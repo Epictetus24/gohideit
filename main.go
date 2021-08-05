@@ -70,10 +70,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if strings.Contains(*input, ".exe") {
-
-	}
-
 	shellcode, errShellcode := ioutil.ReadFile(*input)
 
 	if errShellcode != nil {
@@ -93,13 +89,11 @@ func main() {
 	color.Yellow(fmt.Sprintf("[-]Output directory: %s", dir))
 	color.Yellow(fmt.Sprintf("[-]Output file name: %s", outFile))
 
-	//if exe do donut stuff then the rest
-	// something like donut.converttoshellcode(binaryfile)
-	//else if bin do aes enc and the rest
+	if strings.Contains(*input, ".exe") {
 
-	//promptui stuff for choosing payload
+	}
 
-	gen.Generate(1, *output, *xor, *key, shellcode)
+	gen.Generate(*output, *xor, *key, shellcode)
 
 	/*
 
