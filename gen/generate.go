@@ -109,11 +109,11 @@ func build(paypath string, outpath string) {
 		fmt.Sprintf("CGO_ENABLED=%s", "1"),
 		fmt.Sprintf("GOOS=%s", "windows"),
 		fmt.Sprintf("GOARCH=%s", "amd64"),
-		fmt.Sprintf("GOCACHE=%s", "/home/epictetus/.cache/go-build"),
-		fmt.Sprintf("GOMODCACHE=%s", "/home/epictetus/go/pkg/mod"),
+		fmt.Sprintf("GOCACHE=%s", "/home/kali/.cache/go-build"),
+		fmt.Sprintf("GOMODCACHE=%s", "/home/kali/go/pkg/mod"),
 		fmt.Sprintf("GOPRIVATE=%s", ""),
 		fmt.Sprintf("PATH=%s:%s", path.Join("/usr/lib/go-1.16", "bin"), os.Getenv("PATH")),
-		fmt.Sprintf("GOPATH=%s", "/home/epictetus/go"),
+		fmt.Sprintf("GOPATH=%s", "/home/kali/go"),
 	}
 
 	var out bytes.Buffer
