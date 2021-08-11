@@ -8,5 +8,4 @@ Planned Features:
 
 * Support for generating shellcode from binaries using donut.
 * Support for using goobfuscate against your binary when you are done.
-* 
 
