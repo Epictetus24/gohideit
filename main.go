@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Epictetus24/gohideit/exe"
 	"github.com/Epictetus24/gohideit/gen"
 	"github.com/fatih/color"
 )
@@ -61,19 +62,12 @@ func main() {
 	}
 
 	if *input == "" {
-		color.Red("[!]An input raw binary - *.bin file must be provided with -input.")
+		color.Red("[!]An input raw binary - *.bin file must be provided with -i.")
 		os.Exit(1)
 	}
 
 	if *output == "" {
 		color.Red("[!]An output file must be provided with the -output parameter such as  -output=evil.exe ")
-		os.Exit(1)
-	}
-
-	shellcode, errShellcode := ioutil.ReadFile(*input)
-
-	if errShellcode != nil {
-		color.Red(fmt.Sprintf("[!]%s", errShellcode.Error()))
 		os.Exit(1)
 	}
 
@@ -90,33 +84,25 @@ func main() {
 	color.Yellow(fmt.Sprintf("[-]Output file name: %s", outFile))
 
 	if strings.Contains(*input, ".exe") {
+		exe.ShellcodeFromExe(*input)
+		shellcode, errShellcode := ioutil.ReadFile("loader.bin")
 
-	}
-
-	gen.Generate(*output, *xor, *key, shellcode)
-
-	/*
-
-		generate payload
-
-
-
-
-		If goobf == true {
-
-			check if goobfuscate is installed, if not recommend user download it:
-
-
-			do gobf stuff to binary
-
-			save output file seperately
-
-			exit
+		if errShellcode != nil {
+			color.Red(fmt.Sprintf("[!]%s", errShellcode.Error()))
+			os.Exit(1)
 		}
+		color.Yellow("Exe detected as an input file, attempting to generate shellcode with go-donut.")
 
-		else
-		just save the generated binary
+		gen.Generate(*output, *xor, *key, shellcode)
 
-	*/
+	} else {
+		shellcode, errShellcode := ioutil.ReadFile(*input)
+
+		if errShellcode != nil {
+			color.Red(fmt.Sprintf("[!]%s", errShellcode.Error()))
+			os.Exit(1)
+		}
+		gen.Generate(*output, *xor, *key, shellcode)
+	}
 
 }
