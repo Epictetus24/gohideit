@@ -1,40 +1,24 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
+	"github.com/Epictetus24/gohideit/config"
 	"github.com/Epictetus24/gohideit/exe"
 	"github.com/Epictetus24/gohideit/gen"
 	"github.com/fatih/color"
 )
 
-func govars() {
-	out, err := exec.Command("go", "env").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	output := string(out)
-
-	file, err := os.Create("config/goenv.txt")
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		file.WriteString(output)
-		fmt.Println("Go ENV run, and variables saved in config/goenv.txt")
-	}
-
-}
-
 func init() {
-	govars()
+	if _, err := os.Stat("./goenv.txt"); errors.Is(err, os.ErrNotExist) {
+		config.GoGetEnv()
+	}
 }
 
 func main() {
@@ -43,7 +27,7 @@ func main() {
 	xor := flag.String("xor", "", "XOR Encryption key")
 	input := flag.String("i", "", "Input file path of binary file")
 	output := flag.String("o", "", "Output file path")
-	//goobf := flag.Bool("gobf", false, "Use go-obfuscate against final binary")
+	//goobf := flag.Bool("garble", false, "Use garble against final binary")
 
 	flag.Usage = func() {
 		flag.PrintDefaults()
@@ -76,10 +60,9 @@ func main() {
 		color.Red("[!]The -o output argument is required")
 		os.Exit(1)
 	}
-	dir, outFile := filepath.Split(*output)
 
 	// Check to make sure the output directory exists
-	dir, outFile = filepath.Split(*output)
+	dir, outFile := filepath.Split(*output)
 	color.Yellow(fmt.Sprintf("[-]Output directory: %s", dir))
 	color.Yellow(fmt.Sprintf("[-]Output file name: %s", outFile))
 

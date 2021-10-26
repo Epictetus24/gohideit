@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Epictetus24/gohideit/config"
 	"github.com/Epictetus24/gohideit/enc"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
@@ -99,21 +100,21 @@ func strreplace(strtoreplace string, replacementstr string, path string) {
 
 func build(paypath string, outpath string) {
 
-	command := []string{"build", "-o", outpath, "-ldflags=\"-w -s -H=windowsgui\"", paypath}
+	command := []string{"build", "-o", outpath, "-trimpath", "-ldflags=\"-w -s -H=windowsgui\"", paypath}
 
 	goBinPath := "/usr/bin/go"
 	cmd := exec.Command(goBinPath, command...)
 
 	cmd.Env = []string{
-		fmt.Sprintf("CC=%s", "gcc"),
-		fmt.Sprintf("CGO_ENABLED=%s", "1"),
+		fmt.Sprintf("CC=%s", config.ReadEnv("CC")),
+		fmt.Sprintf("CGO_ENABLED=%s", config.ReadEnv("CGO_ENABLED")),
 		fmt.Sprintf("GOOS=%s", "windows"),
 		fmt.Sprintf("GOARCH=%s", "amd64"),
-		fmt.Sprintf("GOCACHE=%s", "/home/epictetus/.cache/go-build"),
-		fmt.Sprintf("GOMODCACHE=%s", "/home/epictetus/go/pkg/mod"),
+		fmt.Sprintf("GOCACHE=%s", config.ReadEnv("GOCACHE")),
+		fmt.Sprintf("GOMODCACHE=%s", config.ReadEnv("GOMODCACHE")),
 		fmt.Sprintf("GOPRIVATE=%s", ""),
-		fmt.Sprintf("PATH=%s:%s", path.Join("/usr/lib/go-1.16", "bin"), os.Getenv("PATH")),
-		fmt.Sprintf("GOPATH=%s", "/home/epictetus/go"),
+		fmt.Sprintf("PATH=%s:%s", path.Join(config.ReadEnv("GOVERSION"), "bin"), os.Getenv("PATH")),
+		fmt.Sprintf("GOPATH=%s", config.ReadEnv("GOPATH")),
 	}
 
 	var out bytes.Buffer
