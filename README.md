@@ -23,6 +23,8 @@ Once downloaded it's fairly simple, you can either compile the binary and run it
 go run main.go -i <exe/binfile> -key <AES Key String> -xor <XOR Key> -o <output executable>
 ```
 
+[![asciicast](https://asciinema.org/a/nyFglEvadib7FNVGwTzK62cb4.png)](https://asciinema.org/a/nyFglEvadib7FNVGwTzK62cb4)
+
 ## Notes
 Currently this will only generate 64 bit exe's, which is all I plan to use this for. If you need 32bit, you can tweak the code (generate.go), but I don't support 32-bit myself so please don't come to me if your payload of choice does not work.
 
